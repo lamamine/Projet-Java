@@ -10,7 +10,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-
+import java.io.File;
+import java.io.IOException;
 
 
 
@@ -82,19 +83,29 @@ public class PDFReader extends JFrame {
             JFileChooser fileChooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF Files", "pdf");
             fileChooser.setFileFilter(filter);
+            fileChooser.setMultiSelectionEnabled(true);
 
             int returnVal = fileChooser.showOpenDialog(PDFReader.this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fileChooser.getSelectedFile();
 
+                
 
                 try {
                     PDDocument document = PDDocument.load(file);
                     PDFRenderer renderer = new PDFRenderer(document);
 
+
+                
+
                     JPanel panel = new JPanel(new GridLayout(0, 1,10,10)); // Utilise GridLayout pour afficher les pages en 2 colonnes
 
+                    
+                    
+                    
                     Rectangle boundingBox = determineBoundingBox(document,renderer, 5);
+
+          
 
                     for (int pageIndex = 0; pageIndex < document.getNumberOfPages(); pageIndex++) {
                         BufferedImage image = renderer.renderImage(pageIndex);
@@ -104,18 +115,28 @@ public class PDFReader extends JFrame {
                         ImageIcon croppedIcon = new ImageIcon(croppedImage);
                         JLabel croppedLabel = new JLabel(croppedIcon);
 
+
                         JPanel pagePanel = new JPanel();
                         pagePanel.setLayout(new BorderLayout());
                         pagePanel.add(Box.createHorizontalGlue(), BorderLayout.LINE_START);
                         pagePanel.add(croppedLabel, BorderLayout.CENTER);
                         pagePanel.add(Box.createHorizontalGlue(), BorderLayout.LINE_END);
-                     
+                        
+                        
+
+
+
+
                         panel.add(pagePanel);
 
                     }
 
                     JScrollPane scrollPane = new JScrollPane(panel);
-             
+                    
+                    
+
+
+                    
                     JScrollPane commentScrollPane = new JScrollPane(commentArea);
 
                     JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, commentScrollPane);
@@ -149,7 +170,6 @@ public class PDFReader extends JFrame {
             return boundingBox;
         }
         
-
         private Rectangle calculateBoundingBox(BufferedImage image) {
             int minX = Integer.MAX_VALUE;
             int minY = Integer.MAX_VALUE;
@@ -199,7 +219,6 @@ public class PDFReader extends JFrame {
         }
     }
 
-
     private class TabAction extends AbstractAction {
         private int direction;
     
@@ -214,7 +233,6 @@ public class PDFReader extends JFrame {
             tabbedPane.setSelectedIndex(newIndex);
         }
     }
-
 
     private class PageAction extends AbstractAction {
         private int direction;
@@ -250,9 +268,24 @@ public class PDFReader extends JFrame {
                     }
                 }
             }
-        }     
+        }
+
+        
+    
+        
     }
     
+
+    
+    
+    
+    
+
+    
+    
+
+
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
